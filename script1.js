@@ -1,7 +1,7 @@
 var c = document.getElementById('graphics');
-var gl = c.getContext('experimental-webgl');
+var gl = c.getContext('webgl2');
 
-const ext = gl.getExtension("WEBGL_compressed_texture_s3tc");
+const ext = gl.getExtension("WEBGL_compressed_texture_s3tc") || gl.getExtension("MOZ_WEBGL_compressed_texture_s3tc") || gl.getExtension("WEBKIT_WEBGL_compressed_texture_s3tc");
 	
 function createShader(str, type) {
 	var shader = gl.createShader(type);
@@ -22,12 +22,15 @@ function createProgram(vstr, fstr) {
 
 async function loadDDSImage(url){
 	let response = await fetch(url);
-
+	
 	if (!response.ok) {
 		alert("HTTP Error: " + response.status);
+	} else {
+		console.log('Fetching URL succsesfull: ' + url);
 	}
 
 	let rawImgData = await response.arrayBuffer(); // прочитать тело ответа как arrayBuffer
+	console.log('Reading response as array buffer');
 
 	let header = new Int32Array(rawImgData, 0, 128); // header size 128 bytes?
 	if (header[0] != 0x20534444){
@@ -44,7 +47,7 @@ async function loadDDSImage(url){
 	if(dwFourCC != 827611204){
 		alert('Compression type is not dxt1: ' + dwFourCC.toString());
 	}
-	
+	console.log('Image header read succsesfull');
 	
 	const texture = gl.createTexture();
 
@@ -70,7 +73,7 @@ async function loadDDSImage(url){
 }
 
 async function drawTexture(){
-	let texture = await loadDDSImage('https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/img.dds');
+	let texture = await loadDDSImage('https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/soc.dds');
 	
 	var vertexPosBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, vertexPosBuffer);
