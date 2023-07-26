@@ -1,9 +1,7 @@
-var c = document.getElementById('c1');
+var c = document.getElementById('graphics');
 var gl = c.getContext('experimental-webgl');
 
-const ext = gl.getExtension("WEBGL_compressed_texture_s3tc") ||
-	gl.getExtension("MOZ_WEBGL_compressed_texture_s3tc") ||
-	gl.getExtension("WEBKIT_WEBGL_compressed_texture_s3tc");
+const ext = gl.getExtension("WEBGL_compressed_texture_s3tc");
 	
 function createShader(str, type) {
 	var shader = gl.createShader(type);
@@ -71,20 +69,30 @@ async function loadDDSImage(url){
 	return texture;
 }
 
-//loadDDSImage('https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/img.dds').then(alert);
-
 async function drawTexture(){
-	let texture = await loadDDSImage('https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/img.dds');
+	let texture = await loadDDSImage('https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/img.dds');
 	
 	var vertexPosBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, vertexPosBuffer);
 	var vertices = [-1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0];
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 	
-	var vertexShaderCode = 'attribute vec2 pos; varying vec2 onScreenPos;' +
-	'void main() { onScreenPos = pos; gl_Position = vec4(pos, 0.0, 1.0); }';
-	var fragmentShaderCode = 'precision mediump float; varying vec2 onScreenPos;' +
-	'void main() { gl_FragColor = vec4(onScreenPos, 0.0, 1.0); }';
+	var vertexShaderCode = `
+	attribute vec2 pos;
+	varying vec2 onScreenPos;
+	void main() {
+		onScreenPos = pos; 
+		gl_Position = vec4(pos, 0.0, 1.0);
+	}`;
+	var fragmentShaderCode = `
+	precision mediump float; 
+	varying vec2 onScreenPos; 
+	uniform sampler2D inTexture;
+	void main() { 
+	vec2 texCoord = (onScreenPos + vec2(1.0))/2.0; 
+	texCoord.y = 1.0 - texCoord.y; 
+	gl_FragColor = texture2D(inTexture, texCoord); 
+	}`;
 	
 	var program = createProgram(vertexShaderCode, fragmentShaderCode);
 	gl.useProgram(program);
@@ -92,6 +100,10 @@ async function drawTexture(){
 	program.vertexPosAttrib = gl.getAttribLocation(program, 'pos');
 	gl.enableVertexAttribArray(program.vertexPosAttrib);
 	gl.vertexAttribPointer(program.vertexPosAttrib, 2, gl.FLOAT, false, 0, 0);
+	
+	var textureLocation = gl.getUniformLocation(program, "in_Texture");
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+	gl.uniform1i(textureLocation, 0);
 	
 	gl.drawArrays(gl.TRIANGLES, 0, 6);
 }
