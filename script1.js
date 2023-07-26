@@ -15,8 +15,8 @@ c.addEventListener("mouseout", function(mouseEvent) {
 });
 c.addEventListener("wheel", function(wheelEvent) {
 	if (mousePressed){
-		fov[0] *= 1.0 + Math.sign(wheelEvent.deltaY)/25.0;
 		fov[1] *= 1.0 + Math.sign(wheelEvent.deltaY)/25.0;
+		fov[0] = Math.atan(Math.tan(fov[1] * 0.5) * c.width/c.height)*2.0;
 		wheelEvent.preventDefault();
 	}
 });
