@@ -30,8 +30,11 @@ document.addEventListener("keydown", function(keyEvent){
 	}
 });
 
-const ext = gl.getExtension("WEBGL_compressed_texture_s3tc") || gl.getExtension("MOZ_WEBGL_compressed_texture_s3tc") || gl.getExtension("WEBKIT_WEBGL_compressed_texture_s3tc");
-	
+const ext = gl.getExtension("WEBGL_compressed_texture_s3tc");
+if (!ext) {
+	alert("Webgl extension is not supported");
+}
+
 function createShader(str, type) {
 	var shader = gl.createShader(type);
 	gl.shaderSource(shader, str);
