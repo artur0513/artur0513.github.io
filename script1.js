@@ -2,8 +2,8 @@ var c = document.getElementById('graphics');
 var gl = c.getContext('webgl2');
 c.addEventListener("mousemove", function(mouseEvent){
 	if (mousePressed){
-	sphereCoords[1] -= mouseEvent.movementX/600.0;
-	sphereCoords[0] -= mouseEvent.movementY/600.0; }});
+	sphereCoords[1] -= mouseEvent.movementX/500.0;
+	sphereCoords[0] -= mouseEvent.movementY/500.0; }});
 c.addEventListener("mousedown", function(mouseEvent) {
 	mousePressed = true;
 });
@@ -20,7 +20,15 @@ c.addEventListener("wheel", function(wheelEvent) {
 		wheelEvent.preventDefault();
 	}
 });
-
+document.addEventListener("keydown", function(keyEvent){
+	if (keyEvent.code == "KeyF"){
+		if (!document.fullscreenElement) {
+			document.documentElement.requestFullscreen();
+		} else {
+			document.exitFullscreen();
+		}
+	}
+});
 
 const ext = gl.getExtension("WEBGL_compressed_texture_s3tc") || gl.getExtension("MOZ_WEBGL_compressed_texture_s3tc") || gl.getExtension("WEBKIT_WEBGL_compressed_texture_s3tc");
 	
@@ -153,7 +161,9 @@ async function configureWebGL(){
 	return [fovLocation, sphereCoordLocation];
 }
 
-let startFovY = 1.0;
+//c.width = window.innerWidth;
+//c.height = window.innerHeight;
+let startFovY = 1.5707;
 var locations, sphereCoords = [0.0, 0.0], fov = [Math.atan(Math.tan(startFovY * 0.5) * c.width/c.height)*2.0, startFovY], mousePressed = false;
 //document.body.style.cursor = 'none';
 
