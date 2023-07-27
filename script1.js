@@ -1,9 +1,66 @@
 var c = document.getElementById('graphics');
 
 const canvas = document.querySelector('#graphics');
-const upscaleKoeff = 1.50;
+const upscaleKoeff = 1.00;
+
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+if (isMobile) { // for mobile phones
+    console.log('Mobile phone detected');
+	
+	var touchPrevPosition, touchCurrPosition;
+	
+	c.addEventListener("touchstart", function(touchEvent){
+		mousePressed = true;
+		touchCurrPosition = {x: touchEvent.changedTouches[0].clientX, y: touchEvent.changedTouches[0].clientY};
+		touchPrevPosition = touchCurrPosition;
+	});
+	c.addEventListener("touchmove", function(touchEvent){
+		touchCurrPosition = {x: touchEvent.changedTouches[0].clientX, y: touchEvent.changedTouches[0].clientY};
+		sphereCoords[1] -= (touchCurrPosition.x-touchPrevPosition.x)/500.0;
+		sphereCoords[0] -= (touchCurrPosition.y-touchPrevPosition.y)/500.0;
+		touchPrevPosition = touchCurrPosition;
+	});
+	c.addEventListener("touchend", function(touchEvent){
+		mousePressed = false;
+	});
+	c.addEventListener("touchcancel", function(touchEvent){
+		mousePressed = false;
+	});
+}
+else { // for PC 
+	c.addEventListener("mousemove", function(mouseEvent){
+		if (mousePressed){
+		sphereCoords[1] -= mouseEvent.movementX/500.0;
+		sphereCoords[0] -= mouseEvent.movementY/500.0; }});
+	c.addEventListener("mousedown", function(mouseEvent) {
+		mousePressed = true;
+	});
+	c.addEventListener("mouseup", function(mouseEvent) {
+		mousePressed = false;
+	});
+	c.addEventListener("mouseout", function(mouseEvent) { 
+		mousePressed = false;
+	});
+	c.addEventListener("wheel", function(wheelEvent) {
+		if (mousePressed){
+			fov[1] *= 1.0 + Math.sign(wheelEvent.deltaY)/25.0;
+			fov[0] = Math.atan(Math.tan(fov[1] * 0.5) * c.width/c.height)*2.0;
+			wheelEvent.preventDefault();
+		}
+	});
+	document.addEventListener("keydown", function(keyEvent){
+		if (keyEvent.code == "KeyF"){
+			if (!document.fullscreenElement) {
+				document.documentElement.requestFullscreen();
+			} else {
+				document.exitFullscreen();
+			}
+		}
+	});
+}
 
 function onResize(canvas) {
+
   const correctWidth  = Math.floor(canvas.clientWidth * window.devicePixelRatio * upscaleKoeff);
   const correctHeight = Math.floor(canvas.clientHeight * window.devicePixelRatio * upscaleKoeff);
  
@@ -21,36 +78,6 @@ function onResize(canvas) {
 }
 
 var gl = c.getContext('webgl2');
-
-c.addEventListener("mousemove", function(mouseEvent){
-	if (mousePressed){
-	sphereCoords[1] -= mouseEvent.movementX/500.0;
-	sphereCoords[0] -= mouseEvent.movementY/500.0; }});
-c.addEventListener("mousedown", function(mouseEvent) {
-	mousePressed = true;
-});
-c.addEventListener("mouseup", function(mouseEvent) {
-	mousePressed = false;
-});
-c.addEventListener("mouseout", function(mouseEvent) { 
-	mousePressed = false;
-});
-c.addEventListener("wheel", function(wheelEvent) {
-	if (mousePressed){
-		fov[1] *= 1.0 + Math.sign(wheelEvent.deltaY)/25.0;
-		fov[0] = Math.atan(Math.tan(fov[1] * 0.5) * c.width/c.height)*2.0;
-		wheelEvent.preventDefault();
-	}
-});
-document.addEventListener("keydown", function(keyEvent){
-	if (keyEvent.code == "KeyF"){
-		if (!document.fullscreenElement) {
-			document.documentElement.requestFullscreen();
-		} else {
-			document.exitFullscreen();
-		}
-	}
-});
 
 const ext =
   gl.getExtension("WEBGL_compressed_texture_s3tc") ||
