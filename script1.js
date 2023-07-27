@@ -229,7 +229,7 @@ async function loadDDSImageWithoutExtensions(textureType, url){
 async function configureWebGL(){
 	const texture = gl.createTexture();
 	gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-	if (!ext) {
+	if (ext) {
 		await loadDDSImage(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/1.dds');
 		await loadDDSImage(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/2.dds');
 		await loadDDSImage(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/3.dds');
