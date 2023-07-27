@@ -19,6 +19,7 @@ if (isMobile) { // for mobile phones
 		sphereCoords[1] -= (touchCurrPosition.x-touchPrevPosition.x)/500.0;
 		sphereCoords[0] -= (touchCurrPosition.y-touchPrevPosition.y)/500.0;
 		touchPrevPosition = touchCurrPosition;
+		touchEvent.preventDefault();
 	});
 	c.addEventListener("touchend", function(touchEvent){
 		mousePressed = false;
