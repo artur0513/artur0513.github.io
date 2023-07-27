@@ -1,11 +1,11 @@
 var c = document.getElementById('graphics');
 
 const canvas = document.querySelector('#graphics');
-const upscaleKoeff = 1.00;
+const upscaleKoeff = 1.50;
 
 function onResize(canvas) {
-  const correctWidth  = canvas.clientWidth * window.devicePixelRatio * upscaleKoeff;
-  const correctHeight = canvas.clientHeight * window.devicePixelRatio * upscaleKoeff;
+  const correctWidth  = Math.floor(canvas.clientWidth * window.devicePixelRatio * upscaleKoeff);
+  const correctHeight = Math.floor(canvas.clientHeight * window.devicePixelRatio * upscaleKoeff);
  
   const needResize = canvas.width  !== correctWidth ||
                      canvas.height !== correctHeight;
@@ -93,7 +93,7 @@ async function loadDDSImage(textureType, url){
 
 	let rawImgData = await response.arrayBuffer(); // прочитать тело ответа как arrayBuffer
 
-	let header = new Int32Array(rawImgData, 0, 128); // header size 128 bytes?
+	let header = new Int32Array(rawImgData, 0, 32); // header size 128 bytes?
 	if (header[0] != 0x20534444){
 		alert('Loaded file is not .dds, header is: ' + header[0].toString());
 	}
@@ -136,7 +136,7 @@ async function loadDDSImageWithoutExtensions(textureType, url){
 
 	let rawImgData = await response.arrayBuffer(); // прочитать тело ответа как arrayBuffer
 
-	let header = new Int32Array(rawImgData, 0, 128); // header size 128 bytes?
+	let header = new Int32Array(rawImgData, 0, 32); // header size 128 bytes?
 	if (header[0] != 0x20534444){
 		alert('Loaded file is not .dds, header is: ' + header[0].toString());
 	}
@@ -155,7 +155,7 @@ async function loadDDSImageWithoutExtensions(textureType, url){
 	
 	let firstMipMapSize = Math.floor((width + 3) / 4) * Math.floor((height + 3) / 4) * 8;
 	const blockSize = 8; // 8 bytes for 4x4 pixels
-	let encodedImage = new Uint16Array(rawImgData, 128, firstMipMapSize); //mb 129 or 127?
+	let encodedImage = new Uint16Array(rawImgData, 128, firstMipMapSize/2); //mb 129 or 127?
 	
 	// =======================================
 	
@@ -167,13 +167,13 @@ async function loadDDSImageWithoutExtensions(textureType, url){
 		];
 	};
 	
-	let decodedImage = new Uint8Array(firstMipMapSize);
+	let decodedImage = new Uint8Array(width*height*4);
 	
-	var colors = new Uint8Array[16];
+	var colors = new Uint8Array(16);
 	for (var h = 0; h < Math.floor(height/4); h++){
 		for (var w = 0; w < Math.floor(width/4); w++){
 			var color1_16 = encodedImage[(w + h*width)*4];
-			var color2_16 = encodedImage[(w + h*width)*4];
+			var color2_16 = encodedImage[(w + h*width)*4 + 1];
 			
 			let c1 = convert565ByteToRgb(color1_16);
 			colors[0] = c1[0];
@@ -209,23 +209,52 @@ async function loadDDSImageWithoutExtensions(textureType, url){
 				colors[14] = 0;
 				colors[15] = 0;
 			}
-		
+			
+			for (var i = 0; i < 4; i++){
+				console.log(colors[4*i] + ' ' + colors[4*i + 1] + ' ' +colors[4*i+2] + ' ' +colors[4*i+3] + ' ');
+			}
+			
+			for (var x = 0; x < 4; x++){
+				for (var y = 0; y < 4; y++){
+					let id = 0, shift = 0;
+					if (y < 2) {
+						id = encodedImage[(w + h*width)*4 + 2];
+						shift = y;
+					} else {
+						id = encodedImage[(w + h*width)*4 + 3];
+						shift = y - 2;
+					}
+					id = 4*((id >>> x*2 + shift*8)&0x03);
+					
+					let pos = 4*((y + h*4)*width + x + w*4);
+					
+					console.log('pixel x: ' + (x + w*4) + ' y: ' + (y + h*4) + ' id: ' + id + ' Color: ' + colors[id] + ' ' 
+					+ colors[id+1] + ' '+ colors[id+2] + ' '+ colors[id+3] + ' ');
+					
+					decodedImage[pos] = colors[id];
+					decodedImage[pos+1] = colors[id+1];
+					decodedImage[pos+2] = colors[id+2];
+					decodedImage[pos+3] = colors[id+3];
+				}
+			}
+			
 		}
 	}
+	gl.texImage2D(textureType, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, decodedImage);
 	
 }
 
 async function configureWebGL(){
 	const texture = gl.createTexture();
 	gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-	await loadDDSImage(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/1.dds');
-	await loadDDSImage(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/2.dds');
-	await loadDDSImage(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/3.dds');
-	await loadDDSImage(gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/4.dds');
-	await loadDDSImage(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/5.dds');
-	await loadDDSImage(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/6.dds');
-	gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-	gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+	await loadDDSImageWithoutExtensions(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/decode_study.dds');
+	await loadDDSImageWithoutExtensions(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/decode_study.dds');
+	await loadDDSImageWithoutExtensions(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/decode_study.dds');
+	await loadDDSImageWithoutExtensions(gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/decode_study.dds');
+	await loadDDSImageWithoutExtensions(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/decode_study.dds');
+	await loadDDSImageWithoutExtensions(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/decode_study.dds');
+	gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+	gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 	
 	var vertexPosBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, vertexPosBuffer);
