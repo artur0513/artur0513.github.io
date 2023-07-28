@@ -32,17 +32,11 @@ if (isMobile) { // for mobile phones
 		if (touchEvent.touches.length == 2) {
 			currScale = Math.hypot(touchEvent.touches[0].pageX - touchEvent.touches[1].pageX, 
 				touchEvent.touches[0].pageY - touchEvent.touches[1].pageY);
-			if (Math.atan(Math.tan(fov[1] * 0.5 * (prevScale/currScale)) * c.width/c.height)*2.0 < 2.7) {
-				fov[1] *= prevScale/currScale;
-				fov[0] = Math.atan(Math.tan(fov[1] * 0.5) * c.width/c.height)*2.0;
-			}
+			
+			fov[1] *= prevScale/currScale;
+			fov[0] = Math.atan(Math.tan(fov[1] * 0.5) * c.width/c.height)*2.0;
+			
 			prevScale = currScale;
-		}
-		if (sphereCoords[0] < - Math.PI/2.0) {
-				sphereCoords[0] = - Math.PI/2.0;
-			}
-		else if (sphereCoords[0] > Math.PI/2.0) {
-			sphereCoords[0] = Math.PI/2.0;
 		}
 		touchEvent.preventDefault();
 	});
@@ -60,12 +54,7 @@ else { // for PC
 		if (mousePressed){
 			sphereCoords[1] -= mouseEvent.movementX/500.0;
 			sphereCoords[0] -= mouseEvent.movementY/500.0;
-			if (sphereCoords[0] < - Math.PI/2.0) {
-				sphereCoords[0] = - Math.PI/2.0;
-			}
-			else if (sphereCoords[0] > Math.PI/2.0) {
-				sphereCoords[0] = Math.PI/2.0;
-			}
+			
 		}});
 	c.addEventListener("mousedown", function(mouseEvent) {
 		mousePressed = true;
@@ -77,10 +66,8 @@ else { // for PC
 		mousePressed = false;
 	});
 	c.addEventListener("wheel", function(wheelEvent) {
-		if (Math.atan(Math.tan(fov[1] * 0.5 * (1.0 + Math.sign(wheelEvent.deltaY)/25.0)) * c.width/c.height)*2.0 < 2.7) {
-			fov[1] *= 1.0 + Math.sign(wheelEvent.deltaY)/25.0;
-			fov[0] = Math.atan(Math.tan(fov[1] * 0.5) * c.width/c.height)*2.0;
-		}
+		fov[1] *= 1.0 + Math.sign(wheelEvent.deltaY)/25.0;
+		fov[0] = Math.atan(Math.tan(fov[1] * 0.5) * c.width/c.height)*2.0;
 		wheelEvent.preventDefault();
 	});
 	document.addEventListener("keydown", function(keyEvent){
@@ -95,7 +82,7 @@ else { // for PC
 }
 
 function onResize(canvas) {
-
+	
   const correctWidth  = Math.floor(canvas.clientWidth * window.devicePixelRatio * upscaleKoeff);
   const correctHeight = Math.floor(canvas.clientHeight * window.devicePixelRatio * upscaleKoeff);
  
@@ -368,7 +355,7 @@ async function configureWebGL(){
 //c.width = window.innerWidth;
 //c.height = window.innerHeight;
 let startFovY = 1.5707;
-var locations, sphereCoords = [0.0, 0.0], fov = [Math.atan(Math.tan(startFovY * 0.5) * c.width/c.height)*2.0, startFovY], mousePressed = false;
+var locations, sphereCoords = [0.0, 0.0], fov = [Math.atan(Math.tan(startFovY * 0.5) * canvas.clientWidth/canvas.clientHeight)*2.0, startFovY], mousePressed = false;
 //document.body.style.cursor = 'none';
 
 configureWebGL().then(function (result) { // ждем пока все загрузится, а ПОТОМ начинаем рисовать этот кал
@@ -378,6 +365,22 @@ locations = result; requestAnimationFrame(drawScene);
 async function drawScene() { 
 	if (onResize(gl.canvas)){
 		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+	}
+	
+	// clamping sphere coords and fov in the most distugsting way i`ve ever seen
+	if (sphereCoords[0] < - Math.PI/2.0) {
+		sphereCoords[0] = - Math.PI/2.0;
+	}
+	else if (sphereCoords[0] > Math.PI/2.0) {
+		sphereCoords[0] = Math.PI/2.0;
+	}
+	if (fov[0] > 2.7) {
+		fov[0] = 2.69;
+		fov[1] = Math.atan(Math.tan(fov[0] * 0.5) * c.height/c.width)*2.0;
+	}
+	else if (fov[0] < 0.4){
+		fov[0] = 0.41;
+		fov[1] = Math.atan(Math.tan(fov[0] * 0.5) * c.height/c.width)*2.0;
 	}
 
 	let fovLocation = locations[0];
