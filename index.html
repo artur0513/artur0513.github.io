@@ -8,20 +8,20 @@
 	h1   {
 		color: rgb(225, 225, 225);
 		font: georgia;
-		padding-left: 5%;
-		padding-right: 5%;
-		padding-top: 3%;
+		margin-left: 5%;
+		margin-right: 5%;
+		margin-top: 3%;
 	}
 	p    {
 		color: rgb(225, 225, 225);
 		font-size: 15pt;
 		font: georgia;
-		padding-left: 5%;
-		padding-right: 5%;
+		margin-left: 5%;
+		margin-right: 5%;
 	}
 	.box {
-		padding-left: 17.5%;
-		padding-right: 17.5%;
+		margin: auto;
+		max-width: 800px;
 	}
 	.codebox {
 		box-sizing: border-box;
@@ -32,12 +32,14 @@
 	}
 	pre {
 		color: rgb(225, 225, 225);
-		padding-left: 0%
-		padding-right: 0%
+		margin-left: 0%
+		margin-right: 0%
 		font-size: 15pt;
 	}
+	pre, code, kbd { -moz-tab-size:4; -o-tab-size:4; tab-size:4; }
+	pre { white-space:pre-wrap; word-wrap:break-word; overflow:auto; }
 	body {
-		padding-top: 2em;
+		margin-top: 2em;
 	}
 	header {
 		position:absolute;
@@ -112,7 +114,7 @@
 				width: <span style="color:green">15em</span>;
 				border: <span style="color:green">1px solid #333</span>;
 				box-shadow: <span style="color:green">8px 8px 5px #444</span>;
-				padding: <span style="color:green">8px 12px</span>;
+				margin: <span style="color:green">8px 12px</span>;
 				background-image: <span style="color:green">linear-gradient(180deg, #fff, #ddd 40%, #ccc)</span>;
 			<span style="color:DarkRed">}</span>
 			</code></pre>
