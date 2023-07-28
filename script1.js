@@ -32,8 +32,8 @@ if (isMobile) { // for mobile phones
 		if (touchEvent.touches.length == 2) {
 			currScale = Math.hypot(touchEvent.touches[0].pageX - touchEvent.touches[1].pageX, 
 				touchEvent.touches[0].pageY - touchEvent.touches[1].pageY);
-			if (Math.atan(Math.tan(fov[1] * 0.5 * (currScale/prevScale)) * c.width/c.height)*2.0 < 2.7) {
-				fov[1] *= currScale/prevScale;
+			if (Math.atan(Math.tan(fov[1] * 0.5 * (prevScale/currScale)) * c.width/c.height)*2.0 < 2.7) {
+				fov[1] *= prevScale/currScale;
 				fov[0] = Math.atan(Math.tan(fov[1] * 0.5) * c.width/c.height)*2.0;
 			}
 			prevScale = currScale;
