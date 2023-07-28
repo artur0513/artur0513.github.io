@@ -8,6 +8,7 @@ if (isMobile) { // for mobile phones
     console.log('Mobile phone detected');
 	
 	var touchPrevPosition, touchCurrPosition;
+	var scaling = false, prevScale, currScale;
 	
 	c.addEventListener("touchstart", function(touchEvent){
 		mousePressed = true;
@@ -15,6 +16,8 @@ if (isMobile) { // for mobile phones
 		touchPrevPosition = touchCurrPosition;
 	});
 	c.addEventListener("touchmove", function(touchEvent){
+		if (touchEvent.touches.length != 1)
+			return;
 		touchCurrPosition = {x: touchEvent.changedTouches[0].clientX, y: touchEvent.changedTouches[0].clientY};
 		sphereCoords[1] -= (touchCurrPosition.x-touchPrevPosition.x)/500.0;
 		sphereCoords[0] -= (touchCurrPosition.y-touchPrevPosition.y)/500.0;
@@ -27,12 +30,35 @@ if (isMobile) { // for mobile phones
 	c.addEventListener("touchcancel", function(touchEvent){
 		mousePressed = false;
 	});
+	c.addEventListener("gesturestart", function(gestureEvent) {
+		prevScale = 1.0;
+		currScale = 1.0;
+		scaling = true;
+	});
+	c.addEventListener("gestureend", function(gestureEvent) {
+		scaling = false;
+	});
+	c.addEventListener("gesturechange", function(gestureEvent) {
+		currScale = gestureEvent.scale;
+		if (Math.atan(Math.tan(fov[1] * 0.5 * (1.0 + currScale - prevScale)) * c.width/c.height)*2.0 < 2.7) {
+			fov[1] *= 1.0 + currScale - prevScale;
+			fov[0] = Math.atan(Math.tan(fov[1] * 0.5) * c.width/c.height)*2.0;
+		}
+		prevScale = currScale;
+	});
 }
 else { // for PC 
 	c.addEventListener("mousemove", function(mouseEvent){
 		if (mousePressed){
-		sphereCoords[1] -= mouseEvent.movementX/500.0;
-		sphereCoords[0] -= mouseEvent.movementY/500.0; }});
+			sphereCoords[1] -= mouseEvent.movementX/500.0;
+			sphereCoords[0] -= mouseEvent.movementY/500.0;
+			if (sphereCoords[0] < - Math.PI/2.0) {
+				sphereCoords[0] = - Math.PI/2.0;
+			}
+			else if (sphereCoords[0] > Math.PI/2.0) {
+				sphereCoords[0] = Math.PI/2.0;
+			}
+		}});
 	c.addEventListener("mousedown", function(mouseEvent) {
 		mousePressed = true;
 	});
@@ -43,11 +69,11 @@ else { // for PC
 		mousePressed = false;
 	});
 	c.addEventListener("wheel", function(wheelEvent) {
-		if (mousePressed){
+		if (Math.atan(Math.tan(fov[1] * 0.5 * (1.0 + Math.sign(wheelEvent.deltaY)/25.0)) * c.width/c.height)*2.0 < 2.7) {
 			fov[1] *= 1.0 + Math.sign(wheelEvent.deltaY)/25.0;
 			fov[0] = Math.atan(Math.tan(fov[1] * 0.5) * c.width/c.height)*2.0;
-			wheelEvent.preventDefault();
 		}
+		wheelEvent.preventDefault();
 	});
 	document.addEventListener("keydown", function(keyEvent){
 		if (keyEvent.code == "KeyF"){
@@ -133,7 +159,6 @@ async function loadDDSImage(textureType, url){
 	if(dwFourCC != 827611204){
 		alert('Compression type is not dxt1: ' + dwFourCC.toString());
 	}
-	console.log('Image header read succsesfull');
 	
 	let firstMipMapSize = Math.floor((width + 3) / 4) * Math.floor((height + 3) / 4) * 8;
 	let textureData = new Uint8Array(rawImgData, 128, firstMipMapSize); //mb 129 or 127?
@@ -147,6 +172,8 @@ async function loadDDSImage(textureType, url){
 	  0,
 	  textureData,
 	);
+	
+	console.log('Image loaded');
 }
 
 // ЕСЛИ НЕТ ПОДДЕРЖКИ DXT, ТО РАСКОДИРУЕМ ВСЕ САМИ
@@ -258,6 +285,7 @@ async function configureWebGL(){
 	const texture = gl.createTexture();
 	gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
 	if (ext) {
+		console.log('S3TC extensions supported');
 		await loadDDSImage(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/1.dds');
 		await loadDDSImage(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/2.dds');
 		await loadDDSImage(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/3.dds');
@@ -265,7 +293,7 @@ async function configureWebGL(){
 		await loadDDSImage(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/5.dds');
 		await loadDDSImage(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/6.dds');
 	} else {
-		console.log('S3TC extensions not supported, decoding dxt1 manually');
+		console.log('S3TC extensions are NOT supported, decoding dxt1 manually');
 		await loadDDSImageWithoutExtensions(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/1.dds');
 		await loadDDSImageWithoutExtensions(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/2.dds');
 		await loadDDSImageWithoutExtensions(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/3.dds');
@@ -273,8 +301,8 @@ async function configureWebGL(){
 		await loadDDSImageWithoutExtensions(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/5.dds');
 		await loadDDSImageWithoutExtensions(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 'https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/cubemap2/6.dds');
 	}
-	gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-	gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+	gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+	gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 	
 	var vertexPosBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, vertexPosBuffer);
