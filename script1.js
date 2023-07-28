@@ -38,6 +38,12 @@ if (isMobile) { // for mobile phones
 			}
 			prevScale = currScale;
 		}
+		if (sphereCoords[0] < - Math.PI/2.0) {
+				sphereCoords[0] = - Math.PI/2.0;
+			}
+		else if (sphereCoords[0] > Math.PI/2.0) {
+			sphereCoords[0] = Math.PI/2.0;
+		}
 		touchEvent.preventDefault();
 	});
 	c.addEventListener("touchend", function(touchEvent){
