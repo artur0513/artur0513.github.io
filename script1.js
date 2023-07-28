@@ -11,40 +11,41 @@ if (isMobile) { // for mobile phones
 	var scaling = false, prevScale, currScale;
 	
 	c.addEventListener("touchstart", function(touchEvent){
-		mousePressed = true;
-		touchCurrPosition = {x: touchEvent.changedTouches[0].clientX, y: touchEvent.changedTouches[0].clientY};
-		touchPrevPosition = touchCurrPosition;
+		if (touchEvent.touches.length == 1) {
+			mousePressed = true;
+			touchCurrPosition = {x: touchEvent.changedTouches[0].clientX, y: touchEvent.changedTouches[0].clientY};
+			touchPrevPosition = touchCurrPosition;
+		if (touchEvent.touches.length == 2) {
+			scaling = true;
+			prevScale = Math.hypot(touchEvent.touches[0].pageX - touchEvent.touches[1].pageX, 
+				touchEvent.touches[0].pageY - touchEvent.touches[1].pageY);
+		}
 	});
 	c.addEventListener("touchmove", function(touchEvent){
-		if (touchEvent.touches.length != 1)
-			return;
-		touchCurrPosition = {x: touchEvent.changedTouches[0].clientX, y: touchEvent.changedTouches[0].clientY};
-		sphereCoords[1] -= (touchCurrPosition.x-touchPrevPosition.x)/500.0;
-		sphereCoords[0] -= (touchCurrPosition.y-touchPrevPosition.y)/500.0;
-		touchPrevPosition = touchCurrPosition;
+		if (touchEvent.touches.length == 1){
+			touchCurrPosition = {x: touchEvent.changedTouches[0].clientX, y: touchEvent.changedTouches[0].clientY};
+			sphereCoords[1] -= (touchCurrPosition.x-touchPrevPosition.x)/500.0;
+			sphereCoords[0] -= (touchCurrPosition.y-touchPrevPosition.y)/500.0;
+			touchPrevPosition = touchCurrPosition;
+		}
+		if (touchEvent.touches.length == 2) {
+			currScale = Math.hypot(touchEvent.touches[0].pageX - touchEvent.touches[1].pageX, 
+				touchEvent.touches[0].pageY - touchEvent.touches[1].pageY);
+			if (Math.atan(Math.tan(fov[1] * 0.5 * (currScale/prevScale)) * c.width/c.height)*2.0 < 2.7) {
+				fov[1] *= currScale/prevScale;
+				fov[0] = Math.atan(Math.tan(fov[1] * 0.5) * c.width/c.height)*2.0;
+			}
+			prevScale = currScale;
+		}
 		touchEvent.preventDefault();
 	});
 	c.addEventListener("touchend", function(touchEvent){
 		mousePressed = false;
+		scaling = false;
 	});
 	c.addEventListener("touchcancel", function(touchEvent){
 		mousePressed = false;
-	});
-	c.addEventListener("gesturestart", function(gestureEvent) {
-		prevScale = 1.0;
-		currScale = 1.0;
-		scaling = true;
-	});
-	c.addEventListener("gestureend", function(gestureEvent) {
 		scaling = false;
-	});
-	c.addEventListener("gesturechange", function(gestureEvent) {
-		currScale = gestureEvent.scale;
-		if (Math.atan(Math.tan(fov[1] * 0.5 * (1.0 + currScale - prevScale)) * c.width/c.height)*2.0 < 2.7) {
-			fov[1] *= 1.0 + currScale - prevScale;
-			fov[0] = Math.atan(Math.tan(fov[1] * 0.5) * c.width/c.height)*2.0;
-		}
-		prevScale = currScale;
 	});
 }
 else { // for PC 
