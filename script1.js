@@ -15,6 +15,7 @@ if (isMobile) { // for mobile phones
 			mousePressed = true;
 			touchCurrPosition = {x: touchEvent.changedTouches[0].clientX, y: touchEvent.changedTouches[0].clientY};
 			touchPrevPosition = touchCurrPosition;
+		}
 		if (touchEvent.touches.length == 2) {
 			scaling = true;
 			prevScale = Math.hypot(touchEvent.touches[0].pageX - touchEvent.touches[1].pageX, 
