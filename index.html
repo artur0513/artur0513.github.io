@@ -4,7 +4,7 @@
 	<title>Sample Title</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style>
-	body {background-color: rgb(35, 37, 41);}
+	body {background-color: rgb(37, 37, 41);}
 	h1   {
 		color: rgb(225, 225, 225);
 		font: georgia;
@@ -23,13 +23,48 @@
 		padding-left: 17.5%;
 		padding-right: 17.5%;
 	}
+	.codebox {
+		box-sizing: border-box;
+		background-color: rgb(33, 33, 36);
+		box-shadow: 8px 8px 5px rgb(30, 30, 30);
+		border: 1px solid #333;
+		margin-right: 8px;
+	}
+	pre {
+		color: rgb(225, 225, 225);
+		padding-left: 0%
+		padding-right: 0%
+		font-size: 15pt;
+	}
+	body {
+		padding-top: 2em;
+	}
+	header {
+		position:absolute;
+		left:0;
+		top:0;
+		width: 100%;
+		background-color: rgb(33, 33, 36);
+		height: 4em;
+	}
+	h3 {
+		color: rgb(225, 225, 225);
+		font-size: 15pt;
+		font: arial;
+		margin-left: 1em;
+	}
 	</style>
 	</head>
 <body>
+	<!--
+	<header>
+	<h3>Site name or something, hz</h3>
+	</header>-->
+
 	<div class="box">
 		<h1>Lorem Ipsum</h1>
 		
-		<canvas id="graphics" style="width: 100%; height: 100%;"></canvas>
+		<canvas id="graphics" style="width: 100%; height: 100%; aspect-ratio: 2 / 1"></canvas>
 		
 		<script type="text/javascript" src="script1.js"></script>
 		
@@ -44,6 +79,13 @@
 		Vulputate dignissim suspendisse in est ante. Curabitur gravida arcu ac tortor dignissim convallis aenean et. Sem viverra aliquet eget sit 
 		amet. </p>
 		
+		<p>Volutpat blandit aliquam etiam erat velit scelerisque. Sem nulla pharetra diam sit amet nisl. Tellus integer feugiat scelerisque varius. 
+		Pretium aenean pharetra magna ac placerat. Quis enim lobortis scelerisque fermentum dui faucibus in ornare. Aliquet porttitor lacus 
+		luctus accumsan tortor posuere ac ut consequat. Pellentesque elit ullamcorper dignissim cras tincidunt lobortis. Scelerisque mauris 
+		pellentesque pulvinar pellentesque habitant morbi tristique. Cursus turpis massa tincidunt dui ut. Enim ut tellus elementum sagittis 
+		vitae et leo duis. Quis enim lobortis scelerisque fermentum dui faucibus in ornare. Id volutpat lacus laoreet non curabitur. Adipiscing 
+		commodo elit at imperdiet dui accumsan sit. Diam sit amet nisl suscipit adipiscing bibendum.</p>
+		
 		<h1>Lorem Ipsum 2</h1>
 		
 		<p>Augue interdum velit euismod in pellentesque massa placerat duis. Mi tempus imperdiet nulla malesuada pellentesque elit eget gravida. 
@@ -51,12 +93,37 @@
 		elementum facilisis leo vel fringilla est ullamcorper eget. Arcu felis bibendum ut tristique et egestas quis ipsum suspendisse. Integer 
 		eget aliquet nibh praesent tristique. </p>
 		
-		<img src="pic_trulli.jpg" alt="Italian Trulli">
+		<img src="https://raw.githubusercontent.com/artur0513/artur0513.github.io/main/images/soc.png" alt="img1" style="width: 100%; height: 100%;">
 		
 		<p>Duis ultricies lacus sed turpis tincidunt id. Magna ac placerat vestibulum lectus mauris ultrices 
 		eros in cursus. Enim tortor at auctor urna nunc id cursus metus. Nulla facilisi etiam dignissim diam. Quam viverra orci sagittis eu 
 		volutpat. Tellus mauris a diam maecenas sed enim ut. Egestas erat imperdiet sed euismod nisi porta lorem mollis aliquam. In iaculis nunc 
 		sed augue lacus viverra vitae congue eu.</p>
+		
+		<p>Enim nulla aliquet porttitor lacus luctus accumsan tortor posuere ac. Suscipit adipiscing bibendum est ultricies integer quis auctor 
+		elit. Cum sociis natoque penatibus et magnis dis parturient. In eu mi bibendum neque egestas congue quisque egestas. Molestie at elementum 
+		eu facilisis sed odio morbi. Nunc scelerisque viverra mauris in aliquam. Commodo sed egestas egestas fringilla. Pulvinar etiam non quam 
+		lacus suspendisse. Enim diam vulputate ut pharetra sit amet aliquam id diam. Urna condimentum mattis pellentesque id. A pellentesque sit 
+		amet porttitor eget dolor morbi non.</p>
+		
+		<div class = "codebox">
+			<pre><code>
+			<span style="color:DarkSlateBlue">.shadowbox</span> <span style="color:DarkRed">{</span>
+				width: <span style="color:green">15em</span>;
+				border: <span style="color:green">1px solid #333</span>;
+				box-shadow: <span style="color:green">8px 8px 5px #444</span>;
+				padding: <span style="color:green">8px 12px</span>;
+				background-image: <span style="color:green">linear-gradient(180deg, #fff, #ddd 40%, #ccc)</span>;
+			<span style="color:DarkRed">}</span>
+			</code></pre>
+		</div>
+		
+		<p>Porta nibh venenatis cras sed felis. Id diam maecenas ultricies mi eget mauris 
+		pharetra et ultrices. Dui vivamus arcu felis bibendum ut tristique. Duis ut diam quam nulla porttitor. Sapien eget mi proin sed libero. 
+		Faucibus scelerisque eleifend donec pretium. Nisi vitae suscipit tellus mauris. Suspendisse faucibus interdum posuere lorem ipsum. 
+		Vulputate dignissim suspendisse in est ante. Curabitur gravida arcu ac tortor dignissim convallis aenean et. Sem viverra aliquet eget sit 
+		amet. </p>
+		
 	</div>
 </body>
 </html>
