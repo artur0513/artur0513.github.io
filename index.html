@@ -32,28 +32,42 @@
 	}
 	pre {
 		color: rgb(225, 225, 225);
-		margin-left: 0%
-		margin-right: 0%
-		font-size: 15pt;
+		margin: 0;
+		padding-left: 5%;
+		font-size: 12pt;
 	}
 	pre, code, kbd { -moz-tab-size:4; -o-tab-size:4; tab-size:4; }
 	pre { white-space:pre-wrap; word-wrap:break-word; overflow:auto; }
 	body {
-		margin-top: 2em;
+		padding-top: 2em;
+		margin-left: 0;
+		margin-right: 0;
 	}
-	header {
-		position:absolute;
-		left:0;
-		top:0;
+	ul {
+		position: fixed;
 		width: 100%;
+		top: 0;
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
 		background-color: rgb(33, 33, 36);
-		height: 4em;
 	}
-	h3 {
+	li {
+		float: left;
+	}
+	li a {
+		display: block;
 		color: rgb(225, 225, 225);
-		font-size: 15pt;
-		font: arial;
-		margin-left: 1em;
+		text-align: center;
+		padding: 14px 16px;
+		text-decoration: none;
+	}
+	li a:hover:not(.active) {
+		background-color: #111;
+	}
+	.active {
+		background-color: rgb(33, 60, 36);
 	}
 	</style>
 	</head>
@@ -62,6 +76,12 @@
 	<header>
 	<h3>Site name or something, hz</h3>
 	</header>-->
+	<ul>
+		<li><a href="#home">Home</a></li>
+		<li><a href="#news">Github</a></li>
+		<li style="float:right"><a class="active" href="#about">ru</a></li>
+		<li style="float:right"><a href="#news">en</a></li>
+	</ul>
 
 	<div class="box">
 		<h1>Lorem Ipsum</h1>
@@ -110,13 +130,13 @@
 		
 		<div class = "codebox">
 			<pre><code>
-			<span style="color:DarkSlateBlue">.shadowbox</span> <span style="color:DarkRed">{</span>
-				width: <span style="color:green">15em</span>;
-				border: <span style="color:green">1px solid #333</span>;
-				box-shadow: <span style="color:green">8px 8px 5px #444</span>;
-				margin: <span style="color:green">8px 12px</span>;
-				background-image: <span style="color:green">linear-gradient(180deg, #fff, #ddd 40%, #ccc)</span>;
-			<span style="color:DarkRed">}</span>
+<span style="color:DarkSlateBlue">.shadowbox</span> <span style="color:DarkRed">{</span>
+	width: <span style="color:green">15em</span>;
+	border: <span style="color:green">1px solid #333</span>;
+	box-shadow: <span style="color:green">8px 8px 5px #444</span>;
+	margin: <span style="color:green">8px 12px</span>;
+	background-image: <span style="color:green">linear-gradient(180deg, #fff, #ddd 40%, #ccc)</span>;
+<span style="color:DarkRed">}</span>
 			</code></pre>
 		</div>
 		
