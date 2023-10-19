@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+	<title>Sample Title</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+	body {background-color: rgb(37, 37, 41);}
+	h1   {
+		color: rgb(225, 225, 225);
+		font: georgia;
+		margin-left: 5%;
+		margin-right: 5%;
+		margin-top: 3%;
+	}
+	p    {
+		color: rgb(225, 225, 225);
+		font-size: 15pt;
+		font: georgia;
+		margin-left: 5%;
+		margin-right: 5%;
+	}
+	.box {
+		margin: auto;
+		max-width: 1200px;
+	}
+	.codebox {
+		box-sizing: border-box;
+		background-color: rgb(33, 33, 36);
+		box-shadow: 8px 8px 5px rgb(30, 30, 30);
+		border: 1px solid #333;
+		margin-right: 8px;
+	}
+	pre {
+		color: rgb(225, 225, 225);
+		margin: 0;
+		padding-left: 5%;
+		font-size: 12pt;
+	}
+	pre, code, kbd { -moz-tab-size:4; -o-tab-size:4; tab-size:4; }
+	pre { white-space:pre-wrap; word-wrap:break-word; overflow:auto; }
+	body {
+		padding-top: 2em;
+		margin-left: 0;
+		margin-right: 0;
+	}
+	ul {
+		position: fixed;
+		width: 100%;
+		top: 0;
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		background-color: rgb(33, 33, 36);
+	}
+	li {
+		float: left;
+	}
+	li a {
+		display: block;
+		color: rgb(225, 225, 225);
+		text-align: center;
+		padding: 14px 16px;
+		text-decoration: none;
+	}
+	li a:hover:not(.active) {
+		background-color: #111;
+	}
+	.active {
+		background-color: rgb(33, 60, 36);
+	}
+	#drop_zone {
+		background-color: rgb(33, 33, 36);
+		border-style: dashed;
+		border-radius: 10pt;
+		width: 100%;
+		aspect-ratio: 2 / 1;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	#graphics {
+		margin-top: calc(-50% - 5pt);
+		border-style: dashed;
+		border-radius: 10pt;
+		width: 100%;
+		aspect-ratio: 2 / 1;
+		display: flex;
+	}
+	input[type=number] {
+		style="display:inline"
+		display: block;
+		color: rgb(225, 225, 225);
+		background-color: rgb(33, 33, 36);
+		border-style: dashed;
+		font-family: inherit;
+		font-size: inherit;
+		line-height: inherit;
+		background-clip: padding-box;
+		border: 1px solid #000;
+		border-radius: 0.25rem;
+		transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out ;
+	}
+	#x_shift {
+		width: 100%;
+	}
+	button {
+		style="display:inline"
+		display: block;
+		color: rgb(225, 225, 225);
+		background-color: rgb(33, 33, 36);
+		font-family: inherit;
+		font-size: inherit;
+		line-height: inherit;
+		background-clip: padding-box;
+		border: 1px solid #000;
+		border-radius: 0.25rem;
+		transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out ;
+	}
+	button { 
+		font-size: 15pt;
+		font: georgia;
+	}
+	</style>
+	</head>
+<body>
+	<!--
+	<header>
+	<h3>Site name or something, hz</h3>
+	</header>-->
+	<ul>
+		<li><a href="https://artur0513.github.io/">Home</a></li>
+		<li><a href="https://github.com/artur0513">Github</a></li>
+		<li style="float:right"><a class="active" href="#about">ru</a></li>
+		<li style="float:right"><a href="#news">en</a></li>
+	</ul>
+
+	<div class="box">
+		<h1>Сшивание панорам</h1>
+	
+		<div
+			id="drop_zone"
+			ondrop="dropHandler(event);"
+			ondragover="dragOverHandler(event);"
+			onmousedown="return false" onselectstart="return false">
+			<p onmousedown="return false" onselectstart="return false">Перетащаите сюда 6 изображений</p>
+		</div>
+		<canvas onmousedown="return false" onselectstart="return false" id="graphics" ondrop="dropHandler(event);"
+			ondragover="dragOverHandler(event);"></canvas>
+		
+		<p for="xshift">Сдвиг панорамы в радианах (0 - 2*PI): <input type="number" id="xshift" name="xshift" min="-25.132" max="25.132" value="0" placeholder="0" step="0.001"/></p>
+		<p for="yres">Высота сохраняемого изображения (720 - 4096): <input type="number" id="yres" name="yres" min="720" max="4096" value="1920"/> <button type="button" id="loadbutton">Сохранить результат</button> </p>
+		
+		<!--<p for="yres">Высота превью изображения (720 - 4096): <input type="number" id="yres_preview" name="yres" min="720" max="4096" value="1080"/> </p>-->
+		
+		<p>Перетащите из папки с игрой 6 полученных скриншотов в область выше. Не меняйте их названия или формат, иначе получите ошибку.</p>
+		
+		<h1>Гайд по пользованию</h1>
+		
+	</div>
+	
+	<script type="text/javascript" src="pano_tool_script.js"></script>
+</body>
+</html>

@@ -343,7 +343,7 @@ async function configureWebGL(){
 	gl.enableVertexAttribArray(program.vertexPosAttrib);
 	gl.vertexAttribPointer(program.vertexPosAttrib, 2, gl.FLOAT, false, 0, 0);
 	
-	var textureLocation = gl.getUniformLocation(program, "in_Texture");
+	var textureLocation = gl.getUniformLocation(program, "inTexture");
 	gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
 	gl.uniform1i(textureLocation, 0);
 	
